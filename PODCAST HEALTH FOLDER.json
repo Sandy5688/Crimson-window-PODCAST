@@ -1,0 +1,61 @@
+[
+  {"channel": "ONE", "platform": "Amazon Music", "url": "https://feed.podbean.com/emmanuelatere2000/feed.xml"},
+  {"channel": "ONE", "platform": "Deezer", "url": "https://feed.podbean.com/emmanuelatere2000/feed.xml"},
+  {"channel": "ONE", "platform": "iHeartRadio", "url": "https://feed.podbean.com/emmanuelatere2000/feed.xml"},
+  {"channel": "ONE", "platform": "Tunnel", "url": "https://feed.podbean.com/emmanuelatere2000/feed.xml"},
+  {"channel": "ONE", "platform": "Podchaser", "url": "https://feed.podbean.com/emmanuelatere2000/feed.xml"},
+
+  {"channel": "TWO", "platform": "Amazon Music", "url": "https://media.rss.com/first-ever/feed.xml"},
+  {"channel": "TWO", "platform": "Deezer", "url": "https://media.rss.com/first-ever/feed.xml"},
+  {"channel": "TWO", "platform": "iHeartRadio", "url": "https://media.rss.com/first-ever/feed.xml"},
+  {"channel": "TWO", "platform": "Tunnel", "url": "https://media.rss.com/first-ever/feed.xml"},
+  {"channel": "TWO", "platform": "Podchaser", "url": "https://feed.podbean.com/eatere7/feed.xml"},
+
+  {"channel": "THREE", "platform": "Amazon Music", "url": "https://media.rss.com/winner-pod1/feed.xml"},
+  {"channel": "THREE", "platform": "Deezer", "url": "https://media.rss.com/winner-pod1/feed.xml"},
+  {"channel": "THREE", "platform": "iHeartRadio", "url": "https://media.rss.com/winner-pod1/feed.xml"},
+  {"channel": "THREE", "platform": "Tunnel", "url": "https://media.rss.com/winner-pod1/feed.xml"},
+  {"channel": "THREE", "platform": "Podchaser", "url": "https://media.rss.com/health-care/feed.xml"},
+
+  {"channel": "FOUR", "platform": "Amazon Music", "url": "https://feed.podbean.com/ateree91/feed.xml"},
+  {"channel": "FOUR", "platform": "Deezer", "url": "https://feed.podbean.com/ateree91/feed.xml"},
+  {"channel": "FOUR", "platform": "iHeartRadio", "url": "https://feed.podbean.com/ateree91/feed.xml"},
+  {"channel": "FOUR", "platform": "Tunnel", "url": "https://feed.podbean.com/ateree91/feed.xml"},
+  {"channel": "FOUR", "platform": "Podchaser", "url": "https://feed.podbean.com/ateree91/feed.xml"},
+
+  {"channel": "FIVE", "platform": "Amazon Music", "url": "https://feed.podbean.com/uofcumbria/feed.xml"},
+  {"channel": "FIVE", "platform": "Deezer", "url": "https://feed.podbean.com/uofcumbria/feed.xml"},
+  {"channel": "FIVE", "platform": "iHeartRadio", "url": "https://feed.podbean.com/uofcumbria/feed.xml"},
+  {"channel": "FIVE", "platform": "Tunnel", "url": "https://feed.podbean.com/uofcumbria/feed.xml"},
+  {"channel": "FIVE", "platform": "Podchaser", "url": "https://feed.podbean.com/uofcumbria/feed.xml"},
+
+  {"channel": "SIX", "platform": "Amazon Music", "url": "https://media.rss.com/rar/feed.xml"},
+  {"channel": "SIX", "platform": "Deezer", "url": "https://media.rss.com/rar/feed.xml"},
+  {"channel": "SIX", "platform": "iHeartRadio", "url": "https://media.rss.com/rar/feed.xml"},
+  {"channel": "SIX", "platform": "Tunnel", "url": "https://media.rss.com/rar/feed.xml"},
+  {"channel": "SIX", "platform": "Podchaser", "url": "https://feed.podbean.com/victoratere5/feed.xml"},
+
+  {"channel": "SEVEN", "platform": "Amazon Music", "url": "https://feed.podbean.com/preciousolamide777/feed.xml"},
+  {"channel": "SEVEN", "platform": "Deezer", "url": "https://feed.podbean.com/preciousolamide777/feed.xml"},
+  {"channel": "SEVEN", "platform": "iHeartRadio", "url": "https://feed.podbean.com/preciousolamide777/feed.xml"},
+  {"channel": "SEVEN", "platform": "Tunnel", "url": "https://feed.podbean.com/preciousolamide777/feed.xml"},
+  {"channel": "SEVEN", "platform": "Podchaser", "url": "https://feed.podbean.com/preciousolamide777/feed.xml"},
+
+  {"channel": "EIGHT", "platform": "Amazon Music", "url": "https://media.rss.com/pore/feed.xml"},
+  {"channel": "EIGHT", "platform": "Deezer", "url": "https://media.rss.com/pore/feed.xml"},
+  {"channel": "EIGHT", "platform": "iHeartRadio", "url": "https://media.rss.com/pore/feed.xml"},
+  {"channel": "EIGHT", "platform": "Tunnel", "url": "https://media.rss.com/pore/feed.xml"},
+  {"channel": "EIGHT", "platform": "Podchaser", "url": "https://media.rss.com/pore/feed.xml"},
+
+  {"channel": "NINE", "platform": "Amazon Music", "url": "https://feed.podbean.com/atswagger2/feed.xml"},
+  {"channel": "NINE", "platform": "Deezer", "url": "https://feed.podbean.com/atswagger2/feed.xml"},
+  {"channel": "NINE", "platform": "iHeartRadio", "url": "https://feed.podbean.com/atswagger2/feed.xml"},
+  {"channel": "NINE", "platform": "Tunnel", "url": "https://feed.podbean.com/atswagger2/feed.xml"},
+  {"channel": "NINE", "platform": "Podchaser", "url": "https://feed.podbean.com/atswagger2/feed.xml"},
+
+  {"channel": "TEN", "platform": "Amazon Music", "url": "https://media.rss.com/pray-pod1/feed.xml"},
+  {"channel": "TEN", "platform": "Deezer", "url": "https://media.rss.com/pray-pod1/feed.xml"},
+  {"channel": "TEN", "platform": "iHeartRadio", "url": "https://media.rss.com/pray-pod1/feed.xml"},
+  {"channel": "TEN", "platform": "Tunnel", "url": "https://media.rss.com/pray-pod1/feed.xml"},
+  {"channel": "TEN", "platform": "Podchaser", "url": "https://media.rss.com/playing/feed.xml"}
+]
