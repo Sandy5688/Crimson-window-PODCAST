@@ -1,0 +1,5 @@
+Windows Instructions:
+1. Install Python from python.org (check "Add to PATH").
+2. Open this folder in Command Prompt or PowerShell.
+3. Run: python check_feeds.py
+4. See results in statuses.json
