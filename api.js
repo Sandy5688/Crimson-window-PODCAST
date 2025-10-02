@@ -7,30 +7,27 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor for authentication
+// Request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
-    // Example: Add auth token from localStorage or .env
+    // Example: Add auth token from localStorage
     // const token = localStorage.getItem("authToken");
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Add response interceptor for error handling
+// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message =
-      error.response?.data?.message || "An error occurred";
+    const message = error.response?.data?.message || "An error occurred";
     return Promise.reject(new Error(message));
   }
 );
 
-// Specific API method for fetching metadata
+// Fetch metadata by ID
 export const getMetadataById = async (id) => {
   const response = await api.get(`/metadata/${id}`);
   return response.data;
