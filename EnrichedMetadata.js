@@ -53,7 +53,6 @@ function EnrichedMetadata() {
             <td style={{ border: "1px solid #ddd", padding: "8px" }}><strong>Checked At</strong></td>
             <td style={{ border: "1px solid #ddd", padding: "8px" }}>{metadata.checked_at}</td>
           </tr>
-          {/* Additional fields from channels.xlsx */}
           {metadata.email && (
             <tr>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}><strong>Email</strong></td>
@@ -64,6 +63,18 @@ function EnrichedMetadata() {
             <tr>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}><strong>Brand Name</strong></td>
               <td style={{ border: "1px solid #ddd", padding: "8px" }}>{metadata.brandName}</td>
+            </tr>
+          )}
+          {metadata.dateCreated && (
+            <tr>
+              <td style={{ border: "1px solid #ddd", padding: "8px" }}><strong>Date Created</strong></td>
+              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{metadata.dateCreated}</td>
+            </tr>
+          )}
+          {metadata.dateSubmitted && (
+            <tr>
+              <td style={{ border: "1px solid #ddd", padding: "8px" }}><strong>Date Submitted</strong></td>
+              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{metadata.dateSubmitted}</td>
             </tr>
           )}
           {metadata.link && (
