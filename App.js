@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import AutoUpload from "./pages/AutoUpload";
 import EnrichedMetadata from "./pages/EnrichedMetadata";
 import ProtectedRoute from "./components/ProtectedRoute";
-import NotFound from "./pages/NotFound"; // Assume a NotFound component
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
