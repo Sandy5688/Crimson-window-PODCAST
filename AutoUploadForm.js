@@ -11,22 +11,38 @@ function AutoUploadForm() {
     setMessage('Upload is coming soon. Check back later!');
   };
 
+  const handleInputChange = () => {
+    // Reset message on user interaction (tease less, engage more)
+    if (message.includes('Coming Soon')) setMessage('');
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h2>Auto Upload Podcast Feed</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Channel:</label>
+          <label htmlFor="channel">Channel:</label>
           <input
+            id="channel"
             type="text"
             value={channel}
-            onChange={(e) => setChannel(e.target.value)}
+            onChange={(e) => {
+              setChannel(e.target.value);
+              handleInputChange();
+            }}
             placeholder="Enter channel name"
           />
         </div>
         <div>
-          <label>Platform:</label>
-          <select value={platform} onChange={(e) => setPlatform(e.target.value)}>
+          <label htmlFor="platform">Platform:</label>
+          <select 
+            id="platform" 
+            value={platform} 
+            onChange={(e) => {
+              setPlatform(e.target.value);
+              handleInputChange();
+            }}
+          >
             <option value="">Select Platform</option>
             <option value="Amazon Music">Amazon Music</option>
             <option value="Deezer">Deezer</option>
@@ -36,8 +52,9 @@ function AutoUploadForm() {
           </select>
         </div>
         <div>
-          <label>RSS Feed File:</label>
+          <label htmlFor="rss-file">RSS Feed File:</label>
           <input
+            id="rss-file"
             type="file"
             accept=".xml,.rss"
             disabled
@@ -49,6 +66,7 @@ function AutoUploadForm() {
         </button>
       </form>
       <p>{message}</p>
+      {/* Future: Replace with FormData + api.post('/upload') when Repo B lands */}
     </div>
   );
 }
