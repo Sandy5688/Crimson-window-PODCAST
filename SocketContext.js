@@ -10,31 +10,40 @@ export const SocketProvider = ({ children }) => {
   const [feedUpdates, setFeedUpdates] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000'); // Backend Socket.io URL
+    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';  // Env for prod
+    let newSocket;
 
-    newSocket.on('connect', () => {
-      console.log('Socket connected');
-    });
+    try {
+      newSocket = io(socketUrl);
 
-    // Adjusted to match Repo A event: 'feedUpdated'
-    newSocket.on('feedUpdated', (data) => {
-      setFeedUpdates((prev) => [...prev, data]);
-      console.log('Feed updated:', data);
-    });
+      newSocket.on('connect', () => {
+        console.log('Socket connected');
+      });
 
-    // Additional listener for dashboard activity (if Repo A emits)
-    newSocket.on('activityUpdated', (data) => {
-      console.log('Activity updated:', data);
-      // Trigger dashboard refresh if needed
-    });
+      // Adjusted to match Repo A event: 'feedUpdated'
+      newSocket.on('feedUpdated', (data) => {
+        setFeedUpdates((prev) => [...prev, data]);
+        console.log('Feed updated:', data);
+      });
 
-    newSocket.on('disconnect', () => {
-      console.log('Socket disconnected');
-    });
+      // Additional listener for dashboard activity (if Repo A emits)
+      newSocket.on('activityUpdated', (data) => {
+        console.log('Activity updated:', data);
+        // Trigger dashboard refresh if needed
+      });
 
-    setSocket(newSocket);
+      newSocket.on('disconnect', () => {
+        console.log('Socket disconnected');
+      });
 
-    return () => newSocket.close();
+      setSocket(newSocket);
+    } catch (error) {
+      console.error('Socket init failed:', error);  // Graceful fail
+    }
+
+    return () => {
+      if (newSocket) newSocket.close();  // Cleanup
+    };
   }, []);
 
   const value = {
