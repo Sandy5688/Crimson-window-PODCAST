@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSocket } from '../contexts/SocketContext';
-import api from '../utils/api'; // From existing api.js
+import { useSocket } from '../contexts/SocketContext';  // Relative from pages/
+import api from '../utils/api';  // Relative from pages/ to utils/
 
 function Dashboard() {
   const [stats, setStats] = useState({});
@@ -23,7 +23,7 @@ function Dashboard() {
         setRecentActivity(activityRes.data);
         setMetricsHistory(metricsRes.data);
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        console.warn('Dashboard fetch warning (non-fatal):', error);  // Softer log
       } finally {
         setLoading(false);
       }
@@ -33,9 +33,9 @@ function Dashboard() {
 
   useEffect(() => {
     if (feedUpdates.length > 0) {
-      // Refresh data on Socket update
-      // Re-fetch or append as needed
+      // Refresh data on Socket update (re-fetch or append as needed)
       console.log('Dashboard updated via Socket:', feedUpdates);
+      // TODO: Trigger refetch here when Socket matures
     }
   }, [feedUpdates]);
 
@@ -59,7 +59,9 @@ function Dashboard() {
         <h3>Recent Activity</h3>
         <ul>
           {recentActivity.map((activity) => (
-            <li key={activity.id}>{activity.action} - {activity.timestamp}</li>
+            <li key={activity.id || activity.timestamp || Math.random()}>  {/* Fallback key */}
+              {activity.action} - {activity.timestamp}
+            </li>
           ))}
         </ul>
       </div>
@@ -67,18 +69,33 @@ function Dashboard() {
       {/* Metrics History Chart */}
       <div style={{ margin: '20px 0' }}>
         <h3>Metrics History</h3>
-        <chartjs type="line" data={
-          {
-            labels: metricsHistory.map(m => m.date),
-            datasets: [{
-              label: 'Status %',
-              data: metricsHistory.map(m => m.value),
-              borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              tension: 0.1
+        <p>Chart Placeholder (Embed Chart.js below when ready)</p>
+        ```chartjs
+        {
+          "type": "line",
+          "data": {
+            "labels": [
+              ${metricsHistory.map(m => `"${m.date}"`).join(', ')}
+            ],
+            "datasets": [{
+              "label": "Status %",
+              "data": [${metricsHistory.map(m => m.value).join(', ')}],
+              "borderColor": "rgb(75, 192, 192)",
+              "backgroundColor": "rgba(75, 192, 192, 0.2)",
+              "tension": 0.1
             }]
+          },
+          "options": {
+            "responsive": true,
+            "scales": {
+              "y": {
+                "beginAtZero": true
+              }
+            }
           }
-        } />
+        }
+        ```
+        {/* TODO: Replace with <Line data={chartData} /> from react-chartjs-2 when deps added */}
       </div>
     </div>
   );
