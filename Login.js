@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';  // Relative from pages/ to contexts/
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -15,22 +15,34 @@ function Login() {
     }
   };
 
+  const validateEmail = (e) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (e.target.value && !re.test(e.target.value)) {
+      setError('Please enter a valid email');
+    } else {
+      setError('');
+    }
+  };
+
   return (
     <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={validateEmail}
             required
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -40,6 +52,7 @@ function Login() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Login</button>
       </form>
+      {/* TODO: Add "Forgot Password?" link when auth expands */}
     </div>
   );
 }
