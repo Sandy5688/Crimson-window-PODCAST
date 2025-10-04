@@ -5,6 +5,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 10000,  // 10s timeout to avoid eternal hangs
 });
 
 // Request interceptor for authentication (ENABLED)
@@ -33,5 +34,7 @@ export const getMetadataById = async (id) => {
   const response = await api.get(`/metadata/${id}`);
   return response.data;
 };
+
+// TODO: For future uploads (e.g., AutoUploadForm): Use { headers: { 'Content-Type': 'multipart/form-data' } } in api.post
 
 export default api;
