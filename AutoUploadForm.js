@@ -1,68 +1,56 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../utils/api'; // From existing api.js
+import React, { useState } from 'react';
 
-const AuthContext = createContext();
+function AutoUploadForm() {
+  const [channel, setChannel] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [message, setMessage] = useState('Coming Soon: Upload functionality will be available once Repo B is integrated.');
 
-export const useAuth = () => useContext(AuthContext);
-
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      // Verify token with backend
-      verifyUser(token);
-    }
-    setLoading(false);
-  }, []);
-
-  const verifyUser = async (token) => {
-    try {
-      const response = await api.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(response.data); // Assumes { id, email, name }
-    } catch (error) {
-      localStorage.removeItem('authToken');
-      setUser(null);
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token } = response.data;
-      localStorage.setItem('authToken', token);
-      // Verify and set user
-      await verifyUser(token);
-      navigate('/dashboard');
-      return true;
-    } catch (error) {
-      console.error('Login failed:', error);
-      return false;
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setUser(null);
-    navigate('/login');
-  };
-
-  const value = {
-    user,
-    login,
-    logout,
-    loading,
+  // Placeholder: Upload disabled until Repo B is ready
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setMessage('Upload is coming soon. Check back later!');
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
+    <div style={{ padding: '20px' }}>
+      <h2>Auto Upload Podcast Feed</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Channel:</label>
+          <input
+            type="text"
+            value={channel}
+            onChange={(e) => setChannel(e.target.value)}
+            placeholder="Enter channel name"
+          />
+        </div>
+        <div>
+          <label>Platform:</label>
+          <select value={platform} onChange={(e) => setPlatform(e.target.value)}>
+            <option value="">Select Platform</option>
+            <option value="Amazon Music">Amazon Music</option>
+            <option value="Deezer">Deezer</option>
+            <option value="iHeartRadio">iHeartRadio</option>
+            <option value="TuneIn">TuneIn</option>
+            <option value="Podchaser">Podchaser</option>
+          </select>
+        </div>
+        <div>
+          <label>RSS Feed File:</label>
+          <input
+            type="file"
+            accept=".xml,.rss"
+            disabled
+            title="Coming Soon"
+          />
+        </div>
+        <button type="submit" disabled style={{ opacity: 0.5 }}>
+          Upload (Coming Soon)
+        </button>
+      </form>
+      <p>{message}</p>
+    </div>
   );
-};
+}
+
+export default AutoUploadForm;
