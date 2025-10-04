@@ -4,28 +4,38 @@ import { useSocket } from '../contexts/SocketContext';
 import api from '../utils/api'; // From existing api.js
 
 function Dashboard() {
-  const [feeds, setFeeds] = useState([]);
+  const [stats, setStats] = useState({});
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [metricsHistory, setMetricsHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const { feedUpdates } = useSocket();
 
   useEffect(() => {
-    const fetchFeeds = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await api.get('/feeds'); // Assumes backend /api/feeds endpoint
-        setFeeds(response.data);
+        // Parallel fetches for Repo A endpoints
+        const [statsRes, activityRes, metricsRes] = await Promise.all([
+          api.get('/api/dashboard/stats'),
+          api.get('/api/dashboard/recent-activity'),
+          api.get('/api/dashboard/metrics-history')
+        ]);
+        setStats(statsRes.data);
+        setRecentActivity(activityRes.data);
+        setMetricsHistory(metricsRes.data);
       } catch (error) {
-        console.error('Failed to fetch feeds:', error);
+        console.error('Failed to fetch dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchFeeds();
+    fetchDashboardData();
   }, []);
 
   useEffect(() => {
     if (feedUpdates.length > 0) {
-      // Refresh feeds on update
-      setFeeds((prev) => [...prev, ...feedUpdates]);
+      // Refresh data on Socket update
+      // Re-fetch or append as needed
+      console.log('Dashboard updated via Socket:', feedUpdates);
     }
   }, [feedUpdates]);
 
@@ -35,28 +45,41 @@ function Dashboard() {
     <div style={{ padding: '20px' }}>
       <h2>Podcast Dashboard</h2>
       <Link to="/autoupload">Go to Auto Upload</Link>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Channel</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Platform</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Status</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {feeds.map((feed) => (
-            <tr key={`${feed.channel}-${feed.platform}`}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{feed.channel}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{feed.platform}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{feed.status}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                <Link to={`/metadata/${feed.channel}`}>View Metadata</Link>
-              </td>
-            </tr>
+
+      {/* Stats Overview */}
+      <div style={{ margin: '20px 0' }}>
+        <h3>Stats</h3>
+        <p>Total Channels: {stats.totalChannels || 0}</p>
+        <p>Active Feeds: {stats.activeFeeds || 0}</p>
+        <p>Avg Status: {stats.avgStatus || 0}%</p>
+      </div>
+
+      {/* Recent Activity */}
+      <div style={{ margin: '20px 0' }}>
+        <h3>Recent Activity</h3>
+        <ul>
+          {recentActivity.map((activity) => (
+            <li key={activity.id}>{activity.action} - {activity.timestamp}</li>
           ))}
-        </tbody>
-      </table>
+        </ul>
+      </div>
+
+      {/* Metrics History Chart */}
+      <div style={{ margin: '20px 0' }}>
+        <h3>Metrics History</h3>
+        <chartjs type="line" data={
+          {
+            labels: metricsHistory.map(m => m.date),
+            datasets: [{
+              label: 'Status %',
+              data: metricsHistory.map(m => m.value),
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              tension: 0.1
+            }]
+          }
+        } />
+      </div>
     </div>
   );
 }
