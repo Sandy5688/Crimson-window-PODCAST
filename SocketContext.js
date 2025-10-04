@@ -16,9 +16,16 @@ export const SocketProvider = ({ children }) => {
       console.log('Socket connected');
     });
 
+    // Adjusted to match Repo A event: 'feedUpdated'
     newSocket.on('feedUpdated', (data) => {
       setFeedUpdates((prev) => [...prev, data]);
       console.log('Feed updated:', data);
+    });
+
+    // Additional listener for dashboard activity (if Repo A emits)
+    newSocket.on('activityUpdated', (data) => {
+      console.log('Activity updated:', data);
+      // Trigger dashboard refresh if needed
     });
 
     newSocket.on('disconnect', () => {
