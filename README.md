@@ -3,8 +3,7 @@
 ## Overview
 Central hub for managing 10+ podcast channels across platforms (Amazon Music, Deezer, iHeartRadio, TuneIn, Podchaser). Includes health checks, enriched metadata viewer, auth-protected dashboard, and real-time Socket.io updates. Built for scale—feeds.json with multi-URLs, .env creds for 50 channels.
 
-**GitHub Repo**: [https://github.com/yourusername/podcast-feeds [Replace with yours! Fork it, star it, break it responsibly.]](https://github.com/Sandy5688/Crimson-window-PODCAST/edit/main/README.md)
-
+**GitHub Repo**: https://github.com/Sandy5688/Crimson-window-PODCAST/edit/main/README.md
 ## Contents
 - **Data**: feeds.json (multi-URL arrays), channels.xlsx (summaries), statuses.json (generated).
 - **Backend**: server.js (Express + Socket.io + /api/metadata/:id), check_feeds.py (Python health checker).
