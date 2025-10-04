@@ -1,82 +1,68 @@
-import React, { useState } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api'; // From existing api.js
 
-function AutoUploadForm() {
-  const [file, setFile] = useState(null);
-  const [channel, setChannel] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState('');
+const AuthContext = createContext();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) {
-      setMessage('Please select a file');
-      return;
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Verify token with backend
+      verifyUser(token);
     }
+    setLoading(false);
+  }, []);
 
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('channel', channel);
-    formData.append('platform', platform);
-
+  const verifyUser = async (token) => {
     try {
-      const response = await api.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const response = await api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setMessage(`Upload successful: ${response.data.message}`);
-      // Reset form
-      setFile(null);
-      setChannel('');
-      setPlatform('');
+      setUser(response.data); // Assumes { id, email, name }
     } catch (error) {
-      setMessage(`Upload failed: ${error.message}`);
-    } finally {
-      setUploading(false);
+      localStorage.removeItem('authToken');
+      setUser(null);
     }
   };
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>Auto Upload Podcast Feed</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Channel:</label>
-          <input
-            type="text"
-            value={channel}
-            onChange={(e) => setChannel(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Platform:</label>
-          <select value={platform} onChange={(e) => setPlatform(e.target.value)} required>
-            <option value="">Select Platform</option>
-            <option value="Amazon Music">Amazon Music</option>
-            <option value="Deezer">Deezer</option>
-            <option value="iHeartRadio">iHeartRadio</option>
-            <option value="TuneIn">TuneIn</option>
-            <option value="Podchaser">Podchaser</option>
-          </select>
-        </div>
-        <div>
-          <label>RSS Feed File:</label>
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            accept=".xml,.rss"
-            required
-          />
-        </div>
-        <button type="submit" disabled={uploading}>
-          {uploading ? 'Uploading...' : 'Upload'}
-        </button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
-  );
-}
+  const login = async (email, password) => {
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const { token } = response.data;
+      localStorage.setItem('authToken', token);
+      // Verify and set user
+      await verifyUser(token);
+      navigate('/dashboard');
+      return true;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
+    }
+  };
 
-export default AutoUploadForm;
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setUser(null);
+    navigate('/login');
+  };
+
+  const value = {
+    user,
+    login,
+    logout,
+    loading,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
