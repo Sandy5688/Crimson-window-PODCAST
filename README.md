@@ -1,3 +1,10 @@
+## Structure
+- Root: Backend (server.js, check_feeds.py).
+- client/src/pages/: Views (Dashboard, Login).
+- client/src/contexts/: State (AuthContext).
+- client/src/components/: Guards (ProtectedRoute).
+- client/src/utils/: Helpers (api.js).
+
 # Podcast Feeds Deployment & Health Checker 🚀
 
 ## Overview
