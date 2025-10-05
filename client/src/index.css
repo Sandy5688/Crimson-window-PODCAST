@@ -1,0 +1,62 @@
+/* Global Reset & Base Styles for Podcast Feeds App */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f9f9f9;  /* Light bg for clean vibes */
+}
+
+/* Table Styles (for Dashboard, EnrichedMetadata) */
+table { 
+  border-collapse: collapse; 
+  width: 100%; 
+}
+
+th, td { 
+  border: 1px solid #ddd; 
+  padding: 8px; 
+  text-align: left;  /* Left-align for readability */
+}
+
+/* Form Styles (for Login, AutoUploadForm) */
+input, select, button { 
+  padding: 8px; 
+  margin: 4px 0; 
+  width: 100%; 
+  box-sizing: border-box;  /* Include padding in width */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007bff;  /* Blue button pop */
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Responsive: Stack on mobile (under 768px) */
+@media (max-width: 768px) {
+  table, th, td {
+    display: block;
+    width: 100%;
+  }
+  
+  th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  input, select, button {
+    font-size: 16px;  /* Zoom-proof on iOS */
+  }
+}
+
+/* TODO: Expand with .container class for padding consistency across pages */
