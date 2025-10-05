@@ -1,0 +1,253 @@
+# Byte-compiled / optimized / DLL files (Python)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging (Python)
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller (Python)
+*.manifest
+*.spec
+
+# Installer logs (Python)
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports (Python/Node)
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+.nyc_output
+coverage/
+*coverage*
+
+# Translations (Python)
+*.mo
+*.pot
+
+# Django (if applicable)
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask (if applicable)
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv / Poetry
+Pipfile.lock  # Include if reproducible; ignore for platform-specific
+poetry.lock   # Same as above
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath
+*.sage.py
+
+# Environments (Python)
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs (PyCharm, VS Code)
+# PyCharm (JetBrains)
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/artifacts
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
+cmake-build-*/
+.idea/**/mongoSettings.xml
+*.iws
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
+.idea/replstate.xml
+.idea/sonarlint/
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+.idea/httpRequests
+.idea/caches/build_file_checksums.ser
+# PyCharm Patch
+.idea/misc.xml
+.idea/sonarIssues.xml
+.idea/markdown-navigator.xml
+.idea/markdown-navigator-enh.xml
+.idea/markdown-navigator/
+.idea/$CACHE_FILE$
+.idea/codestream.xml
+.spyderproject
+.spyproject
+.ropeproject
+/site
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+cython_debug/
+
+# VS Code
+.vscode/*
+! .vscode/settings.json
+! .vscode/tasks.json
+! .vscode/launch.json
+! .vscode/extensions.json
+! .vscode/*.code-snippets
+.history/
+*.vsix
+.ionide
+.history
+
+# Node.js (Backend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage/
+
+# React (Frontend - client/)
+client/node_modules/
+client/build/
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+# .env
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
