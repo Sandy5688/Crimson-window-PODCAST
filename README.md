@@ -1,4 +1,4 @@
-Podcast Feeds Deployment & Health Checker OverviewComplete monorepo for podcast feed management: Health checker, backend server with Socket.io real-time, React frontend with auth/dashboard/metadata viewer. Supports 50 channels across Amazon Music, Deezer, iHeartRadio, TuneIn, Podchaser. TuneIn manual verification via override endpoint.Repo URL: [Your GitHub Repo URL, e.g., [https://github.com/Sandy5688/Crimson-window-PODCAST] (fork/star/contribute!).Folder StructureRoot: Backend/data/scripts.server.js: Express + Socket.io + endpoints (/api/metadata/:id, /api/dashboard/*, /api/health, /api/feeds/:channel/status).
+[Podcast Feeds Deployment & Health Checker OverviewComplete monorepo for podcast feed management: Health checker, backend server with Socket.io real-time, React frontend with auth/dashboard/metadata viewer. Supports 50 channels across Amazon Music, Deezer, iHeartRadio, TuneIn, Podchaser. TuneIn manual verification via override endpoint.Repo URL: [Your GitHub Repo URL, e.g., [https://github.com/Sandy5688/Crimson-window-PODCAST] (fork/star/contribute!).Folder StructureRoot: Backend/data/scripts.server.js: Express + Socket.io + endpoints (/api/metadata/:id, /api/dashboard/*, /api/health, /api/feeds/:channel/status).
 check_feeds.py: Python health checker.
 feeds.json: Multi-URL channel data (with tunein_status field).
 channels.xlsx: Channel summaries (mocked in server.js).
@@ -44,3 +44,4 @@ FutureRepo B upload integration.
 DB for channels (MongoDB swap mocks).
 More Socket events (activityUpdated).
 
+](https://github.com/Sandy5688/Crimson-window-PODCAST)
