@@ -1,57 +1,46 @@
-## Structure
-- Root: Backend (server.js, check_feeds.py).
-- client/src/pages/: Views (Dashboard, Login).
-- client/src/contexts/: State (AuthContext).
-- client/src/components/: Guards (ProtectedRoute).
-- client/src/utils/: Helpers (api.js).
+Podcast Feeds Deployment & Health Checker OverviewComplete monorepo for podcast feed management: Health checker, backend server with Socket.io real-time, React frontend with auth/dashboard/metadata viewer. Supports 50 channels across Amazon Music, Deezer, iHeartRadio, TuneIn, Podchaser. TuneIn manual verification via override endpoint.Repo URL: [Your GitHub Repo URL, e.g., [https://github.com/Sandy5688/Crimson-window-PODCAST] (fork/star/contribute!).Folder StructureRoot: Backend/data/scripts.server.js: Express + Socket.io + endpoints (/api/metadata/:id, /api/dashboard/*, /api/health, /api/feeds/:channel/status).
+check_feeds.py: Python health checker.
+feeds.json: Multi-URL channel data (with tunein_status field).
+channels.xlsx: Channel summaries (mocked in server.js).
+.env.example: Cred template (fill from AWS).
 
-# Podcast Feeds Deployment & Health Checker 🚀
+client/: React frontend.src/pages/: Views (Dashboard.js, EnrichedMetadata.js, Login.js, NotFound.js, AutoUploadForm.js).
+src/contexts/: State (AuthContext.js, SocketContext.js).
+src/components/: Guards (ProtectedRoute.js).
+src/utils/: Helpers (api.js).
+.env.example: Frontend vars (API/Socket URLs).
 
-## Overview
-Central hub for managing 10+ podcast channels across platforms (Amazon Music, Deezer, iHeartRadio, TuneIn, Podchaser). Includes health checks, enriched metadata viewer, auth-protected dashboard, and real-time Socket.io updates. Built for scale—feeds.json with multi-URLs, .env creds for 50 channels.
+PrerequisitesNode.js v14+ (backend/frontend).
+Python v3.8+ (health checker).
+AWS Account (Secrets Manager for creds—free tier OK).
 
-**GitHub Repo**: https://github.com/Sandy5688/Crimson-window-PODCAST/edit/main/README.md
-## Contents
-- **Data**: feeds.json (multi-URL arrays), channels.xlsx (summaries), statuses.json (generated).
-- **Backend**: server.js (Express + Socket.io + /api/metadata/:id), check_feeds.py (Python health checker).
-- **Frontend** (client/): React app with auth, dashboard, upload placeholder, metadata table.
-  - **src/components/**: ProtectedRoute.js (auth guard).
-  - **src/contexts/**: AuthContext.js, SocketContext.js (state + real-time).
-  - **src/pages/**: Dashboard.js (stats/chart), AutoUploadForm.js (coming soon), EnrichedMetadata.js (table viewer), Login.js, NotFound.js.
-  - **src/utils/**: api.js (axios interceptor magic).
+Setup InstructionsBackend (Root)npm i (installs express, cors, socket.io, node-cron, aws-sdk, dotenv).
+Copy .env.example to .env → Fill placeholders from AWS Secrets Manager (/prod/podcasts/creds).
+npm start (or node server.js) → Runs on port 5000.
 
-## Prerequisites
-- Node.js 14+ (backend/frontend).
-- Python 3+ (health checker).
-- Frontend deps: `cd client && npm i react react-dom react-router-dom axios socket.io-client`.
-- Backend deps: `npm i express cors socket.io`.
+Health Checker (Root)python3 -m venv venv && source venv/bin/activate (Windows: venv\Scripts\activate) → pip install -r requirements.txt (or list Python dependencies: requests, feedparser, python-dotenv) → run python check_feeds.py → Generates statuses.json.Frontend (client/)npm i (installs react, react-router-dom, axios, socket.io-client).
+Copy client/.env.example to client/.env → Set REACT_APP_API_URL=http://localhost:5000/api and REACT_APP_SOCKET_URL=http://localhost:5000.
+npm start → Runs on port 3000.
 
-## Setup (A-Z Quickstart)
-1. **Clone**: `git clone https://github.com/yourusername/podcast-feeds && cd podcast-feeds`.
-2. **Backend Creds**: Edit `.env` (gitignore'd—add your keys from channels.env history).
-3. **Health Check**: `python check_feeds.py` (generates statuses.json from feeds.json).
-4. **Backend**: `node server.js` (port 5000; test /api/metadata/ONE).
-5. **Frontend**: `cd client && npm start` (port 3000).
-6. **Test Flow**: Login → Dashboard (stats + Socket updates) → /metadata/ONE (table with feeds/statuses).
+Full Dev ModeSteps: run python check_feeds.py → npm install in root and client → npm start both or npm run dev script (add to root package.json: "dev": "concurrently "node server.js" "cd client && npm start"").How to Run Health Checker & Server Emits EventsHealth Checker: python check_feeds.py → Updates statuses.json (multi-URL handled, resilient).
+Server Emits: Background cron runs checker every 5 mins → Emits 'feedUpdated' to all clients (Dashboard refreshes). Manual: POST /api/feeds/:channel/status triggers emit. Listen in frontend with useSocket.
 
-## Usage
-- **Health**: Run py script → statuses.json updates (integrates with dashboard).
-- **Metadata**: /metadata/ONE pulls feeds + statuses + mock xlsx data (table with URLs, status, email, links).
-- **Real-Time**: Socket emits 'feedUpdated' on connect—Dashboard listens.
-- **Upload**: Placeholder in AutoUploadForm (Repo B ready? Unlock it).
+UsageHealth Check: Run script → statuses.json → Server emits 'feedUpdated'.
+Metadata: GET /api/metadata/ONE → Merges feeds + statuses + channel mocks (emails from AWS creds).
+Dashboard: GET /api/dashboard/stats (total channels), /recent-activity (list), /metrics-history (chart data)—mocks for local.
+TuneIn Manual: POST /api/feeds/ONE/status { "status": "approved" } → Updates feeds.json.tunein_status + emits Socket.
+Health Monitor: GET /api/health → { ok: true, feeds: 50 }.
 
-## Testing
-- Backend: Postman GET http://localhost:5000/api/metadata/ONE (full JSON).
-- Frontend: /login (test creds) → /dashboard → /autoupload → /random (404).
-- Socket: Console logs 'connected' + 'feedUpdated'.
+TuneIn: Starts "pending" (manual verification)—override endpoint for support team approval.Testing (Smoke Tests)python check_feeds.py: Creates statuses.json with status/checked_at. 
+node server.js: Boots on 5000, no errors. GET /api/metadata/ONE → Full JSON with pending if no statuses. 
+npm start in /client: UI opens, /metadata/ONE fetches JSON (table shows). 
 
-## Security
-- .env gitignored—share via encrypted ZIP/vault.
-- Tokens in localStorage (JWT via /auth/login—expand for prod).
+Security & DeploymentCredentials: AWS Secrets Manager (/prod/podcasts/creds)—loaded on server start (fallback mocks local).
+.gitignore: Blocks .env, statuses.json, node_modules.
+Deploy: Vercel/Netlify for frontend, Heroku/EC2 for backend (set AWS IAM role for secrets).
+TuneIn: Manual override ensures "pending" until support verifies.
 
-## Future Vibes
-- Repo B upload integration.
-- Database swap for xlsx mocks.
-- More Socket events (e.g., 'activityUpdated').
+FutureRepo B upload integration.
+DB for channels (MongoDB swap mocks).
+More Socket events (activityUpdated).
 
-Questions? Ping me—let's keep the feeds flowing! 🎙️
