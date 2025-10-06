@@ -3,6 +3,8 @@ const cors = require("cors");  // npm i cors for cross-origin (frontend:3000)
 const http = require("http");
 const socketIo = require("socket.io");  // npm i socket.io
 const fs = require("fs").promises;
+const cron = require("node-cron");  // npm i node-cron for background job
+const { exec } = require("child_process");  // For running Python
 
 const app = express();
 const server = http.createServer(app);  // http for Socket.io
@@ -11,7 +13,7 @@ const io = socketIo(server, { cors: { origin: "http://localhost:3000" } });  // 
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000' }));  // Allow React dev server
 
-// Metadata endpoint
+// Metadata endpoint (your resilient version)
 app.get("/api/metadata/:id", async (req, res) => {
   try {
     // Read feeds first (critical)
@@ -131,6 +133,55 @@ app.get("/api/metadata/:id", async (req, res) => {
   }
 });
 
+// Step 4: Mock dashboard endpoints for local testing (Repo A fallback)
+app.get("/api/dashboard/stats", (req, res) => {
+  res.json({
+    totalChannels: 10,
+    activeFeeds: 8,
+    avgStatus: 95
+  });
+});
+
+app.get("/api/dashboard/recent-activity", (req, res) => {
+  res.json([
+    { id: 1, action: "Feed checked for ONE", timestamp: "2025-10-06T10:00:00Z" },
+    { id: 2, action: "Upload completed for TWO", timestamp: "2025-10-06T09:00:00Z" }
+  ]);
+});
+
+app.get("/api/dashboard/metrics-history", (req, res) => {
+  res.json([
+    { date: "2025-10-01", value: 90 },
+    { date: "2025-10-02", value: 95 },
+    { date: "2025-10-03", value: 92 }
+  ]);
+});
+
+// Step 7: Health endpoint for monitoring
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, feeds: feeds ? feeds.length : 0 });
+});
+
+// Step 8b: Manual TuneIn status override (admin POST)
+app.post("/api/feeds/:channel/status", async (req, res) => {
+  const { channel } = req.params;
+  const { status } = req.body;  // e.g., { "status": "approved" }
+  try {
+    const feeds = JSON.parse(await fs.readFile("feeds.json"));
+    const feed = feeds.find(f => f.channel === channel && f.platform === "TuneIn");
+    if (feed) {
+      feed.tunein_status = status;
+      await fs.writeFile("feeds.json", JSON.stringify(feeds, null, 2));
+      io.emit('feedUpdated', { channel, tunein_status: status });
+      res.json({ message: "TuneIn status updated" });
+    } else {
+      res.status(404).json({ message: "Feed not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Update failed" });
+  }
+});
+
 // Socket.io setup
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
@@ -145,4 +196,23 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('User
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// Step 5: Background health check job (every 5 mins) + Socket emit
+cron.schedule("*/5 * * * *", () => {
+  console.log("Running background health check...");
+  exec("python check_feeds.py", (error, stdout, stderr) => {
+    if (error) {
+      console.error("Health check failed:", error);
+      return;
+    }
+    console.log("Health check complete:", stdout);
+    // Emit to all clients
+    io.emit("feedUpdated", { channel: "ALL", status: "refreshed" });
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server + Socket.io running on port ${PORT}`));
