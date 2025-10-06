@@ -14,24 +14,36 @@ app.use(cors({ origin: 'http://localhost:3000' }));  // Allow React dev server
 // Metadata endpoint
 app.get("/api/metadata/:id", async (req, res) => {
   try {
-    // Read files with error guard
-    let feeds, statuses;
+    // Read feeds first (critical)
+    let feeds;
     try {
       feeds = JSON.parse(await fs.readFile("feeds.json"));
-      statuses = JSON.parse(await fs.readFile("statuses.json"));
     } catch (fileError) {
-      return res.status(500).json({ message: "Data files missing/corrupt" });
+      return res.status(500).json({ message: "feeds.json missing/corrupt" });
+    }
+
+    // Read statuses with fallback
+    let statuses = [];
+    try {
+      statuses = JSON.parse(await fs.readFile("statuses.json"));
+    } catch (statusError) {
+      console.warn("statuses.json missing—using pending fallback");
+      // No return 500—proceed with pending status
     }
 
     const id = req.params.id;
 
-    // Find feed and status by channel ID (url array handled in merge)
+    // Find feed (always exists or 404)
     const feed = feeds.find((f) => f.channel === id);
-    const status = statuses.find((s) => s.channel === id);
-
-    if (!feed || !status) {
+    if (!feed) {
       return res.status(404).json({ message: "Metadata not found" });
     }
+
+    // Find status or fallback to pending
+    const status = statuses.find((s) => s.channel === id) || { 
+      status: "pending", 
+      checked_at: "N/A" 
+    };
 
     // Full mock channels.xlsx data (from your history; expand as needed)
     const channelData = {
@@ -133,9 +145,4 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server + Socket.io running on port ${PORT}`));
+    console.log('User
