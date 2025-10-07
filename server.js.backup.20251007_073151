@@ -1,21 +1,22 @@
 const express = require("express");
-const cors = require("cors");
+const cors = require("cors");  // npm i cors for cross-origin (frontend:3000)
 const http = require("http");
-const socketIo = require("socket.io");
+const socketIo = require("socket.io");  // npm i socket.io
 const fs = require("fs").promises;
-const cron = require("node-cron");
-const { exec } = require("child_process");
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
+const cron = require("node-cron");  // npm i node-cron for background job
+const { exec } = require("child_process");  // For running Python
+const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");  // npm i @aws-sdk/client-secrets-manager for v3
 
 // AWS Secrets Manager v3 setup
-const client = new SecretsManagerClient({ region: 'eu-north-1' });
+const client = new SecretsManagerClient({ region: 'eu-north-1' });  // Your region (Stockholm)
 
-// Load creds from AWS on startup
-let creds = {};
+// Load creds from AWS on startup (your full .env as JSON from vault)
+let creds = {};  // Global for use in endpoints
 const loadSecrets = async () => {
+  // Skip AWS in local development
   if (process.env.NODE_ENV !== 'production') {
     console.log('Local development mode - using mock credentials');
-    creds = {};
+    creds = {};  // Use fallback emails in channelData
     return;
   }
   
@@ -26,17 +27,17 @@ const loadSecrets = async () => {
     console.log('Full secrets loaded from AWS Secrets Manager v3 (50 channels)');
   } catch (error) {
     console.error('Failed to load secrets:', error);
-    creds = {};
+    creds = {};  // Fallback empty—use mocks for local
   }
 };
-loadSecrets();
+loadSecrets();  // Run on start
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, { cors: { origin: true } });
+const server = http.createServer(app);  // http for Socket.io
+const io = socketIo(server, { cors: { origin: true } });  // CORS for frontend - allow all origins in dev
 
 app.use(express.json());
-app.use(cors({ origin: true }));
+app.use(cors({ origin: true }));  // Allow all origins for Codespaces
 
 // Root endpoint
 app.get("/", (req, res) => {
@@ -47,137 +48,13 @@ app.get("/", (req, res) => {
       health: "/api/health",
       feeds: "/api/feeds",
       statuses: "/api/statuses",
-      metadata: "/api/metadata/:id (e.g., /api/metadata/ONE)",
-      allMetadata: "/api/metadata/all"
+      metadata: "/api/metadata/:id (e.g., /api/metadata/ONE)"
     },
     status: "running"
   });
 });
 
-// Get ALL metadata for all channels (NEW ENDPOINT - Returns all 50 channels)
-app.get("/api/metadata/all", async (req, res) => {
-  try {
-    // Read feeds
-    let feeds;
-    try {
-      feeds = JSON.parse(await fs.readFile("feeds.json"));
-    } catch (fileError) {
-      return res.status(500).json({ message: "feeds.json missing/corrupt" });
-    }
-
-    // Read statuses with fallback
-    let statuses = [];
-    try {
-      statuses = JSON.parse(await fs.readFile("statuses.json"));
-    } catch (statusError) {
-      console.warn("statuses.json missing—using ok fallback");
-    }
-
-    // Channel metadata for all 10 channels
-    const channelData = {
-      ONE: {
-        email: creds.AMAZON_CH1_EMAIL || "member@rhythmaura.digital",
-        brandName: "The Emmanuelatere2000's Podcast",
-        dateCreated: "24-09-2025",
-        dateSubmitted: "24-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/c40177c1-4854-4ef6-bff0-9742e23db7fe/the-emmanuelatere2000s-podcast"
-      },
-      TWO: {
-        email: creds.AMAZON_CH2_EMAIL || "admin@vibehaven.life",
-        brandName: "First Ever",
-        dateCreated: "24-09-2025",
-        dateSubmitted: "24-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/e98af407-64c1-410e-9427-a5acdecd4c69/first-ever"
-      },
-      THREE: {
-        email: creds.AMAZON_CH3_EMAIL || "music@sonicwave.quest",
-        brandName: "WINNER",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/9d5b04c1-f84f-4c29-9021-2730081ddbf6"
-      },
-      FOUR: {
-        email: creds.AMAZON_CH4_EMAIL || "studio@melodydock.shop",
-        brandName: "The ateree91's Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      FIVE: {
-        email: creds.AMAZON_CH5_EMAIL || "info@channel5.com",
-        brandName: "University of Cumbria Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      SIX: {
-        email: creds.AMAZON_CH6_EMAIL || "info@channel6.com",
-        brandName: "Channel Six Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      SEVEN: {
-        email: creds.AMAZON_CH7_EMAIL || "info@channel7.com",
-        brandName: "Precious Olamide Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      EIGHT: {
-        email: creds.AMAZON_CH8_EMAIL || "info@channel8.com",
-        brandName: "Channel Eight Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      NINE: {
-        email: creds.AMAZON_CH9_EMAIL || "info@channel9.com",
-        brandName: "At Swagger Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      },
-      TEN: {
-        email: creds.AMAZON_CH10_EMAIL || "info@channel10.com",
-        brandName: "Pray Podcast",
-        dateCreated: "25-09-2025",
-        dateSubmitted: "25-09-2025",
-        link: "https://music.amazon.co.uk/podcasts/..."
-      }
-    };
-
-    // Combine all data
-    const allMetadata = feeds.map(feed => {
-      const status = statuses.find(s => s.channel === feed.channel) || { 
-        status: "ok", 
-        checked_at: new Date().toISOString()
-      };
-      
-      const metadata = channelData[feed.channel] || { 
-        email: "unknown", 
-        brandName: "Unknown Channel", 
-        dateCreated: "N/A", 
-        dateSubmitted: "N/A",
-        link: "#"
-      };
-
-      return {
-        ...feed,
-        ...status,
-        history: metadata
-      };
-    });
-
-    res.json(allMetadata);
-    
-  } catch (error) {
-    console.error("All metadata endpoint error:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-});
-
-// Metadata endpoint (single channel by ID)
+// Metadata endpoint (your resilient version, with AWS creds for emails)
 app.get("/api/metadata/:id", async (req, res) => {
   try {
     // Read feeds first (critical)
@@ -194,6 +71,7 @@ app.get("/api/metadata/:id", async (req, res) => {
       statuses = JSON.parse(await fs.readFile("statuses.json"));
     } catch (statusError) {
       console.warn("statuses.json missing—using pending fallback");
+      // No return 500—proceed with pending status
     }
 
     const id = req.params.id;
@@ -210,7 +88,7 @@ app.get("/api/metadata/:id", async (req, res) => {
       checked_at: "N/A" 
     };
 
-    // Channel metadata
+    // Full lengthy mock channels.xlsx data (your history; emails from AWS creds or fallback)
     const channelData = {
       ONE: {
         email: creds.AMAZON_CH1_EMAIL || "member@rhythmaura.digital",
@@ -240,6 +118,7 @@ app.get("/api/metadata/:id", async (req, res) => {
         dateSubmitted: "25-09-2025",
         link: "https://music.amazon.co.uk/podcasts/..."
       }
+      // Add more channels (FIVE through FIFTY) as needed
     };
 
     // Get metadata or fallback

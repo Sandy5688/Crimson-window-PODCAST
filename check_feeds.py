@@ -1,46 +1,55 @@
+#!/usr/bin/env python3
 import json
 import requests
-import datetime
+from datetime import datetime
 
-try:
-    with open("feeds.json") as f:
-        feeds = json.load(f)
-except FileNotFoundError:
-    print("Error: feeds.json not found!")
-    exit(1)
-except json.JSONDecodeError as e:
-    print(f"Error: Invalid JSON in feeds.json - {e}")
-    exit(1)
-
-results = []
-for feed in feeds:
-    url = feed.get("url")
-    if isinstance(url, list) and url:  # Handle multi-URL array
-        primary_url = url[0]  # Use first as primary
-        alt_urls = url[1:] if len(url) > 1 else []
-        print(f"Checking primary URL for {feed['channel']}/{feed['platform']}: {primary_url}")
-        if alt_urls:
-            print(f"Alternatives: {', '.join(alt_urls)}")  # Log for reference
-    else:
-        primary_url = url  # Backward compat for string URL
-        print(f"Checking URL for {feed['channel']}/{feed['platform']}: {primary_url}")
-
+def check_feed_status(url):
+    """Check if RSS feed is accessible"""
     try:
-        r = requests.get(primary_url, timeout=10)
-        status = "ok" if r.status_code == 200 else f"HTTP {r.status_code}"
-    except Exception as e:
-        status = f"error: {e}"
+        response = requests.get(url, timeout=10)
+        return "ok" if response.status_code == 200 else "error"
+    except:
+        return "error"
 
-    results.append({
-        "channel": feed["channel"],
-        "platform": feed["platform"],
-        "url": url,  # Keep original (list or string) for reference
-        "status": status,
-        "checked_at": datetime.datetime.utcnow().isoformat()
-    })
+def main():
+    # Read feeds.json
+    with open('feeds.json', 'r') as f:
+        feeds = json.load(f)
+    
+    statuses = []
+    checked_channels = set()
+    
+    print("Checking feed statuses...")
+    
+    for feed in feeds:
+        channel = feed['channel']
+        
+        # Only check each channel once (first occurrence)
+        if channel in checked_channels:
+            continue
+        
+        checked_channels.add(channel)
+        
+        # Check first URL from the channel
+        if feed['url'] and len(feed['url']) > 0:
+            status = check_feed_status(feed['url'][0])
+        else:
+            status = "error"
+        
+        statuses.append({
+            "channel": channel,
+            "status": status,
+            "checked_at": datetime.now().isoformat()
+        })
+        
+        print(f"  ✓ Channel {channel}: {status}")
+    
+    # Write statuses.json
+    with open('statuses.json', 'w') as f:
+        json.dump(statuses, f, indent=2)
+    
+    print(f"\n✅ Status check complete! {len(statuses)} channels checked")
+    print("📝 Results saved to statuses.json")
 
-with open("statuses.json", "w") as f:
-    json.dump(results, f, indent=2)
-
-print("Health check complete – statuses.json created!")
-# TODO: For multi-URL: Loop through alts and aggregate statuses if primary fails
+if __name__ == "__main__":
+    main()
